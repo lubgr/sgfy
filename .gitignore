@@ -1,0 +1,9 @@
+bin
+build
+.gdb*
+*.swp
+.tags
+.clang*
+.vimrc
+.vim
+
