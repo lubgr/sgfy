@@ -1,19 +1,18 @@
 
 BUILD ?= build
 EXEC = $(BUILD)/runtests
-HEADER = src/sgfy.h
+HEADER = sgfy.h
 
-CXXFLAGS ?= -std=c++11
+CXXFLAGS ?= -std=c++11 -O0 -g
 
 LIBS ?= -lCppUTest
 
-TESTSRC = $(wildcard test/*.cpp)
-TESTOBJ = $(TESTSRC:test/%.cpp=$(BUILD)/%.o)
+TESTOBJ = $(BUILD)/tests.o
 
-$(EXEC): $(HEADER) $(TESTOBJ) $(BUILD)
+$(EXEC): $(TESTOBJ) $(BUILD)
 	$(CXX) $(CXXFLAGS) -o $(EXEC) $(TESTOBJ) $(LDFLAGS) $(LIBS)
 
-$(BUILD)/%.o: test/%.cpp
+$(BUILD)/%.o: %.cpp $(HEADER)
 	$(CXX) $(CXXFLAGS) -I src -o $@ -c $<
 
 $(BUILD):
