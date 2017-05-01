@@ -69,7 +69,7 @@ namespace sgfy {
     template<class S, class ...T> std::string str(const std::string& fmt, const S& firstArg,
             const T&... args)
     {
-        std::stringstream stream;
+        std::ostringstream stream;
 
         assert(fmt.find("%") != std::string::npos);
 
