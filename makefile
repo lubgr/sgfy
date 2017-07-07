@@ -1,4 +1,6 @@
 
+include $(wildcard makefile.in Makefile.in)
+
 BUILD ?= build
 EXEC = $(BUILD)/runtests
 HEADER = sgfy.h

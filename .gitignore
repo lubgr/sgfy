@@ -6,4 +6,4 @@ build
 .clang*
 .vimrc
 .vim
-
+[Mm]akefile.in
