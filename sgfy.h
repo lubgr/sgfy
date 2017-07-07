@@ -121,13 +121,24 @@ namespace sgfy {
         stream << fmt;
     }
 
+    template<class S, class ...T> void splitAndAppend(std::ostream& stream, const S&, const T&...)
+    {
+        return;
+    }
+
+    template<class S, class ...T> void splitAndAppend(std::ostream& stream, const char *fmt, const S& firstArg,
+            const T&... args)
+    {
+        splitAndAppend(stream, std::string(fmt), firstArg, args...);
+    }
+
     template<class S, class ...T> void splitAndAppend(std::ostream& stream, const std::string& fmt,
             const S& firstArg, const T&... args)
     {
         const size_t pos = fmt.find("%S");;
 
         if (fmt.length() == 0)
-            return;
+            splitAndAppend(stream, firstArg, args...);
         else if (pos == std::string::npos)
             append(stream, fmt, "", firstArg, args...);
         else if (pos == 0) {
