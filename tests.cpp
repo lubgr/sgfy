@@ -1,6 +1,7 @@
 
 #include <sstream>
 #include <cmath>
+#include <iomanip>
 #include "sgfy.h"
 #include <CppUTest/TestHarness.h>
 #include <CppUTest/CommandLineTestRunner.h>
@@ -137,6 +138,15 @@ TEST(Sgfy, twoNonLiteralStrings)
     const std::string fmt[2] = {"%d %s", " %u"};
     const std::string result(str(fmt[0], 1, "two", fmt[1], 3));
     const std::string expected("1 two 3");
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, streamWithFormatModification)
+{
+    const std::string expected("3.1 3.1 3.14159 46");
+    const std::string result(str("%S%S %S ", std::setprecision(2), M_PI, M_PI,
+                "%S%S", std::setprecision(6), M_PI, " %S%S", std::hex, 70));
 
     CHECK_EQUAL(expected, result);
 }
