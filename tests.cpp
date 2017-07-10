@@ -123,6 +123,24 @@ TEST(Sgfy, fmtWithUnmatchedArgs)
     CHECK_EQUAL(expected, result);
 }
 
+TEST(Sgfy, nonLiteralString)
+{
+    const std::string fmt("%d %s");
+    const std::string result(str(fmt, 1, "two"));
+    const std::string expected("1 two");
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, twoNonLiteralStrings)
+{
+    const std::string fmt[2] = {"%d %s", " %u"};
+    const std::string result(str(fmt[0], 1, "two", fmt[1], 3));
+    const std::string expected("1 two 3");
+
+    CHECK_EQUAL(expected, result);
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
