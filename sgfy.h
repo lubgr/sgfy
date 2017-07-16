@@ -126,8 +126,8 @@ namespace sgfy {
         return;
     }
 
-    template<class S, class ...T> void splitAndAppend(std::ostream& stream, const char *fmt, const S& firstArg,
-            const T&... args)
+    template<class S, class ...T> void splitAndAppend(std::ostream& stream, const char *fmt,
+            const S& firstArg, const T&... args)
     {
         splitAndAppend(stream, std::string(fmt), firstArg, args...);
     }
