@@ -160,6 +160,65 @@ TEST(Sgfy, streamWithFormatModification)
     CHECK_EQUAL(expected, result);
 }
 
+TEST(Sgfy, printfDoc01)
+{
+    const std::string expected("\t[     Hello]\n\t[Hello     ]\n\t[     Hello]\n\t[Hell      ]\n\t"
+            "[Hell      ]\n");
+    const char* s = "Hello";
+    const std::string result(str("\t[%10s]\n\t[%-10s]\n\t[%*s]\n\t[%-10.*s]\n\t[%-*.*s]\n", s, s,
+                10, s, 4, s, 10, 4, s));
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, printfDoc02)
+{
+    const std::string expected("\t1 2 000003 0  +4 4294967295\n");
+    const std::string result(str("\t%i %d %.6i %i %.0i %+i %u\n", 1, 2, 3, 0, 0, 4, -1));
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, printfDoc03)
+{
+    const std::string expected("\t5 a A 0x6\n");
+    const std::string result(str("\t%x %x %X %#x\n", 5, 10, 10, 6));
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, printfDoc04)
+{
+    const std::string expected("\t12 012 04\n");
+    const std::string result(str("\t%o %#o %#o\n", 10, 10, 4));
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, printfDoc05)
+{
+    const std::string expected("\t01.50 1.50  1.50\n");
+    const std::string result(str("\t%05.2f %.2f %5.2f\n", 1.5, 1.5, 1.5));
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, printfDoc06)
+{
+    const std::string expected("\t0x1.8p+0 0X1.8P+0\n");
+    const std::string result(str("\t%a %A\n", 1.5, 1.5));
+
+    CHECK_EQUAL(expected, result);
+}
+
+TEST(Sgfy, printfDoc07)
+{
+    const std::string result(str("\t%c %%\n", 65, "'%*c'\n", 5, 'x', "'%*c'\n", -5, 'x'));
+    const std::string expected("\tA %\n'    x'\n'x    '\n");
+
+    CHECK_EQUAL(expected, result);
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
