@@ -124,6 +124,15 @@ TEST(Sgfy, fmtWithUnmatchedArgs)
     CHECK_EQUAL(expected, result);
 }
 
+TEST(Sgfy, startWithNonFmtString)
+{
+    const char *noFmtStr = "No format string";
+    const std::string result(str(noFmtStr, " %d", 10));
+    const std::string expected = std::string(noFmtStr) + " 10";
+
+    CHECK_EQUAL(expected, result);
+}
+
 TEST(Sgfy, nonLiteralString)
 {
     const std::string fmt("%d %s");

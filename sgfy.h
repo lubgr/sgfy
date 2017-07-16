@@ -153,8 +153,6 @@ namespace sgfy {
     {
         std::ostringstream stream;
 
-        assert(fmt.find("%") != std::string::npos);
-
         splitAndAppend(stream, fmt, firstArg, args...);
 
         return stream.str();
