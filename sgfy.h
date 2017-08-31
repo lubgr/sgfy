@@ -1,3 +1,5 @@
+#ifndef SGFY_H
+#define SGFY_H
 
 #include <string>
 #include <cstring>
@@ -163,3 +165,5 @@ namespace sgfy {
         return termination;
     }
 }
+
+#endif
