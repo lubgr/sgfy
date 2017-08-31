@@ -14,7 +14,8 @@ namespace sgfy {
     template<class S, class ...T> void splitAndAppend(std::ostream& stream,
             const std::string& nextFmt, const S& firstArg, const T&... args);
 
-    void shiftOrContinue(std::ostream& stream, std::ptrdiff_t& nLeft, const std::string& nextFmt)
+    inline void shiftOrContinue(std::ostream& stream, std::ptrdiff_t& nLeft,
+            const std::string& nextFmt)
     {
         assert(nLeft == 0);
 
@@ -44,7 +45,7 @@ namespace sgfy {
         return nullptr;
     }
 
-    void variadicAppend(std::ostream& stream, const char *fmt, std::va_list args)
+    inline void variadicAppend(std::ostream& stream, const char *fmt, std::va_list args)
     {
         std::va_list argsCopy;
         std::size_t bufferSize;
@@ -70,7 +71,7 @@ namespace sgfy {
         delete[] buffer;
     }
 
-    void variadicAppend(std::ostream& stream, const char *fmt, ...)
+    inline void variadicAppend(std::ostream& stream, const char *fmt, ...)
     {
         std::va_list args;
 
@@ -97,7 +98,7 @@ namespace sgfy {
         shiftOrContinue(stream, n, nextFmt, firstArg, args...);
     }
 
-    std::ptrdiff_t count(const std::string& fmt, const std::string& pattern)
+    inline std::ptrdiff_t count(const std::string& fmt, const std::string& pattern)
     {
         const std::regex regex(pattern);
         const auto start(std::sregex_iterator(fmt.begin(), fmt.end(), regex));
@@ -105,7 +106,7 @@ namespace sgfy {
         return std::distance(start, std::sregex_iterator());
     }
 
-    std::ptrdiff_t getNumFmtSpecifier(const std::string& fmt)
+    inline std::ptrdiff_t getNumFmtSpecifier(const std::string& fmt)
         /* The regex pattern are constructed following the docs of std::printf. */
     {
         static const std::string start("%[-+ #0]*");
