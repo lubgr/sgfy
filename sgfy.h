@@ -40,9 +40,9 @@ namespace sgfy {
     }
 
     template<class T> typename
-        std::enable_if<!std::is_trivial<T>::value, std::nullptr_t>::type pass(const T&)
+        std::enable_if<!std::is_trivial<T>::value, const char *>::type pass(const T&)
     {
-        return nullptr;
+        return "";
     }
 
     inline void variadicAppend(std::ostream& stream, const char *fmt, std::va_list args)
@@ -93,7 +93,7 @@ namespace sgfy {
          * implementation-defined semantics" (C++11, §5.2.2/7). It's possible though to turn
          * non-trivial arguments into null-pointer, which can't discard information because there
          * are no format specifier for non-trivial types and such a call would be illegal anyhow. */
-        variadicAppend(stream, fmt.c_str(), firstArg, pass(args)...);
+        variadicAppend(stream, fmt.c_str(), pass(firstArg), pass(args)...);
 
         shiftOrContinue(stream, n, nextFmt, firstArg, args...);
     }
