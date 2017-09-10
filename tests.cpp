@@ -10,9 +10,12 @@ using namespace sgfy;
 
 const std::string objStr = "[obj]";
 
-struct Class {} obj;
+struct Class {
+    /* Make sure that std::is_trivial<Class>::value is false: */
+    Class() {};
+} obj;
 
-std::ostream& operator << (std::ostream& stream, const Class& rhs)
+std::ostream& operator << (std::ostream& stream, const Class&)
 {
     stream << objStr;
 
@@ -78,12 +81,20 @@ TEST(Sgfy, onlyStreamOperator)
     CHECK_EQUAL("before " + objStr + " between " + objStr + " after", result);
 }
 
+TEST(Sgfy, streamOperatorWithPercent)
+{
+    const std::string result(str("%% %S %% %S %%", obj, obj));
+
+    CHECK_EQUAL("% " + objStr + " % " + objStr + " %", result);
+}
+
 TEST(Sgfy, twoStrings)
 {
     const std::string result(str("first %s, second %s, end", "string", "string"));
 
     CHECK_EQUAL("first string, second string, end", result);
 }
+
 TEST(Sgfy, multipleIntegerFmt)
 {
     const std::string result(str("one: %d, two: %03d, three: %+03d", 1, 2, 3));
@@ -102,7 +113,7 @@ TEST(Sgfy, floatAndStringFmt)
 
 TEST(Sgfy, mixedFmtSpecifier)
 {
-    const std::string result(str("%d %d %d %s", 0, 1, 2, "three ", "%d %.1f", 4, 5.6123, " %u", 7));
+    const std::string result(str("%d %d %d %s%d %.1f %u", 0, 1, 2, "three ", 4, 5.6123, 7));
     const std::string expected("0 1 2 three 4 5.6 7");
 
     CHECK_EQUAL(expected, result);
@@ -110,7 +121,7 @@ TEST(Sgfy, mixedFmtSpecifier)
 
 TEST(Sgfy, mixedFmtSpecifierWithStreamOperator)
 {
-    const std::string result(str("%d %.2f", -1, 1.234, " %S", obj, " %s", "---", " %S 1234", obj));
+    const std::string result(str("%d %.2f %S %s %S 1234", -1, 1.234, obj, "---", obj));
     const std::string expected("-1 1.23 " + objStr + " --- " + objStr + " 1234");
 
     CHECK_EQUAL(expected, result);
@@ -118,17 +129,8 @@ TEST(Sgfy, mixedFmtSpecifierWithStreamOperator)
 
 TEST(Sgfy, fmtWithUnmatchedArgs)
 {
-    const std::string result(str("%d %s", 10, "ten", 20, obj, obj));
-    const std::string expected("10 ten");
-
-    CHECK_EQUAL(expected, result);
-}
-
-TEST(Sgfy, startWithNonFmtString)
-{
-    const char *noFmtStr = "No format string";
-    const std::string result(str(noFmtStr, " %d", 10));
-    const std::string expected = std::string(noFmtStr) + " 10";
+    const std::string result(str("%d %s ten", 10, "ten", 20, obj, obj));
+    const std::string expected("10 ten ten");
 
     CHECK_EQUAL(expected, result);
 }
@@ -144,9 +146,9 @@ TEST(Sgfy, nonLiteralString)
 
 TEST(Sgfy, twoNonLiteralStrings)
 {
-    const std::string fmt[2] = {"%d %s", " %u"};
-    const std::string result(str(fmt[0], 1, "two", fmt[1], 3));
-    const std::string expected("1 two 3");
+    const std::string fmt("start %d %S %s %S %u end");
+    const std::string result(str(fmt, 1, obj, "two", obj, 3));
+    const std::string expected("start 1 " + objStr + " two " + objStr + " 3 end");
 
     CHECK_EQUAL(expected, result);
 }
@@ -154,8 +156,8 @@ TEST(Sgfy, twoNonLiteralStrings)
 TEST(Sgfy, streamWithFormatModification)
 {
     const std::string expected("3.1 3.1 3.14159 46");
-    const std::string result(str("%S%S %S ", std::setprecision(2), M_PI, M_PI,
-                "%S%S", std::setprecision(6), M_PI, " %S%S", std::hex, 70));
+    const std::string result(str("%S%S %S %S%S %S%S", std::setprecision(2), M_PI, M_PI,
+                std::setprecision(6), M_PI, std::hex, 70));
 
     CHECK_EQUAL(expected, result);
 }
@@ -213,7 +215,7 @@ TEST(Sgfy, printfDoc06)
 
 TEST(Sgfy, printfDoc07)
 {
-    const std::string result(str("\t%c %%\n", 65, "'%*c'\n", 5, 'x', "'%*c'\n", -5, 'x'));
+    const std::string result(str("\t%c %%\n'%*c'\n'%*c'\n", 65, 5, 'x', -5, 'x'));
     const std::string expected("\tA %\n'    x'\n'x    '\n");
 
     CHECK_EQUAL(expected, result);
