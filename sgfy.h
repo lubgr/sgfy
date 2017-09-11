@@ -185,7 +185,7 @@ namespace sgfy {
 
         ap.nextArg(firstArg);
 
-        (void) expander{ (ap.nextArg(args), void(), 0)... };
+        (void) expander{ 0, (ap.nextArg(args), void(), 0)... };
 
         return stream.str();
     }
