@@ -10,7 +10,7 @@
 #include <sstream>
 
 namespace sgfy {
-    inline std::sregex_iterator getFmtMatches(const std::string& fmt)
+    inline std::sregex_iterator *getFmtMatches(const std::string& fmt)
     {
         static const std::regex fmtPattern(
                 "%"
@@ -31,7 +31,34 @@ namespace sgfy {
                 ")"
                 );
 
-        return std::sregex_iterator(fmt.begin(), fmt.end(), fmtPattern);
+        return new std::sregex_iterator(fmt.begin(), fmt.end(), fmtPattern);
+    }
+
+    typedef std::iterator_traits<std::string::const_iterator>::difference_type difference_type;
+
+    inline difference_type getLength(std::sregex_iterator *match)
+    {
+        return (*match)->length();
+    }
+
+    inline difference_type getPos(std::sregex_iterator *match)
+    {
+        return (*match)->position();
+    }
+
+    inline bool isAtEnd(std::sregex_iterator *match)
+    {
+        return *match == std::sregex_iterator();
+    }
+
+    inline void increment(std::sregex_iterator *match)
+    {
+        ++(*match);
+    }
+
+    inline std::string getStr(std::sregex_iterator *match)
+    {
+        return (*match)->str();
     }
 
     inline void append(std::ostream& stream, const char *fmt, std::va_list args)
@@ -87,9 +114,14 @@ namespace sgfy {
                 pos(0)
         {}
 
+            ~ArgProcessor()
+            {
+                delete match;
+            }
+
             template<class T> void nextArg(const T& arg)
             {
-                if (match == std::sregex_iterator()) {
+                if (isAtEnd(match)) {
                     std::cerr << "Argument without format specifier: " << arg << std::endl;
                     return;
                 } else
@@ -102,7 +134,7 @@ namespace sgfy {
             {
                 updateCurrentMatchVars();
 
-                if (match->str() == "%S") {
+                if (getStr(match) == "%S") {
                     append(stream, fmt.substr(pos, partialFmtLength - 2));
                     stream << arg;
                 } else if (nAsterisks > 0 && asterisksWidth.size() == nAsterisks)
@@ -120,17 +152,17 @@ namespace sgfy {
 
             void updateCurrentMatchVars()
             {
-                partialFmtLength = static_cast<size_t>(match->position() + match->length()) - pos;
+                partialFmtLength = static_cast<size_t>(getPos(match) + getLength(match)) - pos;
                 nAsterisks = numberOfAsterisksInMatch();
             }
 
             size_t numberOfAsterisksInMatch() const
             {
-                const size_t first = match->str().find('*');
+                const size_t first = getStr(match).find('*');
 
                 if (first == std::string::npos)
                     return 0;
-                else if (match->str().rfind('*') == first)
+                else if (getStr(match).rfind('*') == first)
                     return 1;
                 else
                     return 2;
@@ -161,14 +193,14 @@ namespace sgfy {
             {
                 pos += partialFmtLength;
 
-                ++match;
+                increment(match);
 
-                if (match == std::sregex_iterator() && pos < fmt.length())
+                if (isAtEnd(match) && pos < fmt.length())
                     append(stream, fmt.substr(pos));
             }
 
             std::vector<int> asterisksWidth;
-            std::sregex_iterator match;
+            std::sregex_iterator *match;
             std::ostream& stream;
             const std::string& fmt;
             size_t partialFmtLength;
