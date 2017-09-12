@@ -2,7 +2,6 @@
 #define SGFY_H
 
 #include <cassert>
-#include <vector>
 #include <regex>
 #include <iostream>
 #include <string>
@@ -106,6 +105,7 @@ namespace sgfy {
     class ArgProcessor {
         public:
             ArgProcessor(std::ostream& stream, const std::string& fmt) :
+                nStoredAsterisks(0),
                 match(getFmtMatches(fmt)),
                 stream(stream),
                 fmt(fmt),
@@ -137,7 +137,7 @@ namespace sgfy {
                 if (getStr(match) == "%S") {
                     append(stream, fmt.substr(pos, partialFmtLength - 2));
                     stream << arg;
-                } else if (nAsterisks > 0 && asterisksWidth.size() == nAsterisks)
+                } else if (nAsterisks > 0 && nStoredAsterisks == nAsterisks)
                     appendVarWidth(arg);
                 else if (nAsterisks > 0) {
                     storeVariableFieldWidth(arg);
@@ -176,7 +176,7 @@ namespace sgfy {
                     append(stream, fmt.substr(pos, partialFmtLength), asterisksWidth[0],
                             asterisksWidth[1], arg);
 
-                asterisksWidth.clear();
+                nStoredAsterisks = 0;
             }
 
             template<class T> void storeVariableFieldWidth(const T&)
@@ -186,7 +186,9 @@ namespace sgfy {
 
             void storeVariableFieldWidth(const int& width)
             {
-                asterisksWidth.push_back(width);
+                assert(nStoredAsterisks <= 1);
+
+                asterisksWidth[nStoredAsterisks++] = width;
             }
 
             void nextMatchOrFinalize()
@@ -199,7 +201,8 @@ namespace sgfy {
                     append(stream, fmt.substr(pos));
             }
 
-            std::vector<int> asterisksWidth;
+            int asterisksWidth[2];
+            short unsigned nStoredAsterisks;
             std::sregex_iterator *match;
             std::ostream& stream;
             const std::string& fmt;
