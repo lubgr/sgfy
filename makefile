@@ -9,18 +9,18 @@ CXXFLAGS ?= -std=c++11 -O0 -g
 
 LIBS ?= -lCppUTest
 
-TESTOBJ = $(BUILD)/tests.o
+OBJ = $(BUILD)/tests.o $(BUILD)/sgfy.o
 
-$(EXEC): $(TESTOBJ) $(BUILD)
-	$(CXX) $(CXXFLAGS) -o $(EXEC) $(TESTOBJ) $(LDFLAGS) $(LIBS)
+$(EXEC): $(OBJ) $(OBJ) | $(BUILD)
+	$(CXX) $(CXXFLAGS) -o $(EXEC) $(OBJ) $(LDFLAGS) $(LIBS)
 
 $(BUILD)/%.o: %.cpp $(HEADER)
 	$(CXX) $(CXXFLAGS) -I src -o $@ -c $<
 
 $(BUILD):
-	mkdir $(BUILD)
+	mkdir -p $(BUILD)
 
 clean:
-	$(RM) $(EXEC) $(TESTOBJ)
+	$(RM) $(EXEC) $(OBJ)
 
 .PHONY: clean
