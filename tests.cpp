@@ -223,5 +223,7 @@ TEST(Sgfy, printfDoc07)
 
 int main(int argc, char **argv)
 {
+    sgfy::str("Initiate %s to avoid CppUTest memleak errors", "static variables");
+
     return CommandLineTestRunner::RunAllTests(argc, argv);
 }
