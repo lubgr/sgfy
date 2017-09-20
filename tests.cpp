@@ -12,8 +12,15 @@ const std::string objStr = "[obj]";
 
 struct Class {
     /* Make sure that std::is_trivial<Class>::value is false: */
-    Class() {};
+    Class() {}
 } obj;
+
+struct ClassPrivateCopyCtor : public Class {
+    ClassPrivateCopyCtor() {}
+
+    private:
+        ClassPrivateCopyCtor(const ClassPrivateCopyCtor&) {}
+} objPrivCopyCtor;
 
 std::ostream& operator << (std::ostream& stream, const Class&)
 {
@@ -79,6 +86,13 @@ TEST(Sgfy, onlyStreamOperator)
     const std::string result(str("before %S between %S after", obj, obj));
 
     CHECK_EQUAL("before " + objStr + " between " + objStr + " after", result);
+}
+
+TEST(Sgfy, streamOperatorWithPrivCtor)
+{
+    const std::string result(str("%S", objPrivCopyCtor));
+
+    CHECK_EQUAL(objStr, result);
 }
 
 TEST(Sgfy, streamOperatorWithPercent)
