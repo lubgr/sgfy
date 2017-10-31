@@ -109,6 +109,7 @@ void sgfy::macroAppend(std::ostream& stream, const char *fmt, ...)
 }
 
 sgfy::ArgProcessor::ArgProcessor(std::ostream& stream, const std::string& fmt) :
+    asterisksWidth{0, 0},
     nStoredAsterisks(0),
     match(new Match(fmt)),
     stream(stream),
