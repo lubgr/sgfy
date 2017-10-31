@@ -34,6 +34,8 @@ namespace sgfy {
     class ArgProcessor {
         public:
             ArgProcessor(std::ostream& stream, const std::string& fmt);
+            ArgProcessor(const ArgProcessor& other) = delete;
+            ArgProcessor& operator = (const ArgProcessor& rhs) = delete;
             ~ArgProcessor();
 
             template<class T> void nextArg(const T& arg)
