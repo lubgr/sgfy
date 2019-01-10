@@ -12,10 +12,10 @@ LIBS ?= -lCppUTest
 
 OBJ = $(BUILD)/tests.o $(BUILD)/sgfy.o
 
-$(EXEC): $(OBJ) $(OBJ) | $(BUILD)
+$(EXEC): $(OBJ) $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(EXEC) $(OBJ) $(LDFLAGS) $(LIBS)
 
-$(BUILD)/%.o: %.cpp $(HEADER)
+$(BUILD)/%.o: %.cpp $(HEADER) | $(BUILD)
 	$(CXX) $(CXXFLAGS) -I src -o $@ -c $<
 
 $(BUILD):
