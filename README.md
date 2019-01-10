@@ -1,5 +1,5 @@
 
-# sgfy: Mix printf with std::ostream operators
+# sgfy: Mix printf with std::ostream operators [![Build Status](https://travis-ci.org/lubgr/sgfy.svg?branch=master)](https://travis-ci.org/lubgr/sgfy)
 
 These ~200 lines of code (one header, one compilation unit, C++11 required) allow you to mix old
 school, type-unsafe `std::printf` formatting with `std::ostream` operators to assemble a
