@@ -5,7 +5,8 @@ BUILD ?= build
 EXEC = $(BUILD)/runtests
 HEADER = sgfy.h
 
-CXXFLAGS ?= -std=c++11 -O0 -g
+CXXFLAGS ?= -std=c++11 -O0 -g -pedantic -Werror -Wsign-conversion -Wall -Wextra
+CXX ?= g++
 
 LIBS ?= -lCppUTest
 
